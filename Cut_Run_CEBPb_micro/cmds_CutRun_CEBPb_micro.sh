@@ -157,24 +157,3 @@ case $1 in
   *)
     echo "Unknown argument for sample ${SAMPLE}"
     ;;
-  modbed)
-    echo "Modifying sixth column of bed file for sample ${SAMPLE} for bigBed conversion" 
-    awk '{print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t+"}' ${DATA_DIR}/seacr/${SAMPLE}.relaxed.bed >${DATA_DIR}/seacr/${SAMPLE}.relaxed.mod.bed
-    ;;
-  bigbed)
-    echo "Creating bigBed for sample ${SAMPLE}"
-    /home/jon_kerry/bedToBigBed ${DATA_DIR}/seacr/${SAMPLE}.relaxed.mod.bed /home/jon_kerry/CutAndRun/chromosome.sizes ${DATA_DIR}/bw/hg38/${SAMPLE}.relaxed.bb &
-    ;;
-  macs)
-    echo "Running macs2 on sample ${SAMPLE}"
-    macs2 callpeak -B -t ${DATA_DIR}/macs/${SAMPLE}_4macs.bam --name ${SAMPLE}_macs2 --outdir ${DATA_DIR}/macs -g hs -f BAMPE -q 0.01 --keep-dup all --SPMR &
-    ;;
-  *)
-    echo "Unknown argument for sample ${SAMPLE}"
-    ;;
-esac
-# bedtools sort -faidx ${DATA_DIR}/chromosome.sizes -i ${DATA_DIR}/${FILE_STEM}_macs2_peaks.narrowPeak > ${DATA_DIR}/${FILE_STEM}_macs2_sorted.narrowPeak
-# coverageBed -a ${DATA_DIR}/${FILE_STEM}_macs2_sorted.narrowPeak -b ${DATA_DIR}/${FILE_STEM}_4macs.bam -g ${DATA_DIR}/chromosome.sizes -sorted -counts > ${DATA_DIR}/${FILE_STEM}_counts
-# bedtools bamtobed -bedpe -i ${DATA_DIR}/${FILE_STEM}.bam > ${DATA_DIR}/${FILE_STEM}.bed
-# bedtools genomecov -bg -i ${DATA_DIR}/${FILE_STEM}.fragments.bed -g ${DATA_DIR}/chromosome.sizes > ${DATA_DIR}/${FILE_STEM}.fragments.bedgraph
-# plotHeatmap -m matrix_k27_ntc.mat.gz -out ExampleHeatmap11.png --startLabel "" --endLabel "" -y "Signal" -x "Peak" -z "K4me3Peaks" --legendLocation none --plotType std --yMin 0 --yMax 30 --samplesLabel "K27ac NTC1 1" "K27ac NTC1 2" "K27ac NTC1 3"
