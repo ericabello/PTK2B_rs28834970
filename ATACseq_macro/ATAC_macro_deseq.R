@@ -13,9 +13,10 @@ library("dplyr")
 #library("clusterProfiler")
 #library("ChIPseeker")
 #library("TxDb.Hsapiens.UCSC.hg38.knownGene")
+library("limma")
 
 
-setwd("~/Documents/ptk2b_kolf_B11_C8_D3/ATACseq/final_counts_Nov2022/")
+setwd("/Volumes/Samsung_T5/Sanger_laptop_300823/Documents/ptk2b_kolf_B11_C8_D3/ATACseq/final_counts_Nov2022/")
 #ANALYSIS BEDCOVERAGE COUNTS + DESEQ2 BOTH BATCHES. excluded F4 as per RNAseq
 #merge df counts and rename columns to input into dds object (as countdata)
 initial_filename <- "B11_1_macro_PTK2B_ATAC_ATAC_macro_PTK2B.counts";
@@ -75,14 +76,9 @@ legend
 
 #batch correction on vsd tranformed counts
 vsd <- vst(dds, blind = FALSE)
-#plotPCA(vsd, "batch")
-assay(vsd) <- limma::removeBatchEffect(assay(vsd), batch=vsd$batch, design = model.matrix(~legend$genotype_PTK2B))
-p <- vsd %>% plotPCA("genotype_PTK2B")
-p <- p + geom_text(aes_string(label = "name"), color = "black") + theme(text = element_text(size = 14))+theme_classic()+theme(aspect.ratio = 1)
-plot(p)
 #for custom pca plot return df of PC1 and 2
 df <- plotPCA(vsd, "genotype_PTK2B", returnData = TRUE)
-df$batch <- legend$batch
+
 a <- c("1","2","3","4", "5")
 df$hiPSC_clone <- c(rep(a, each=3))
 #custom PCA plot
@@ -93,7 +89,7 @@ ggplot(data= df, mapping = aes(x=PC1 , y=PC2))+geom_point(size=4, mapping = aes(
                                                                                                                                                                                                                                                    legend.box.margin=margin(0,0,0,0), legend.box.spacing = margin(10,10,10,10))+ xlab("PC1 80% variance") + ylab("PC2 10% variance")
 #ggsave("/Users/eb19/Documents/ptk2b_kolf_B11_C8_D3/RNAseq/all_samples_noF4/PCA_vsdBatchCorr_macro_noNames.jpeg", device= "jpeg")
 
-ggsave('PCA_ATAC_vsdBatchCorr_macro_noNames.jpeg', device = "jpeg")
+ggsave('PCA_ATAC_vsdBatchCorr_macro_noNames.pdf', device = "pdf")
 
 #annotate peaks down 0.5
 library("clusterProfiler")
