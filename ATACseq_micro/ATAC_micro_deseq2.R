@@ -13,9 +13,9 @@ library("dplyr")
 library("clusterProfiler")
 library("ChIPseeker")
 library("TxDb.Hsapiens.UCSC.hg38.knownGene")
+library("limma")
 
-
-setwd("~/Documents/data_PTK2B_microglia/ATACseq/counts/")
+setwd("/Volumes/Samsung_T5/Sanger_laptop_300823/Documents/data_PTK2B_microglia/ATACseq/counts/")
 #ANALYSIS BEDCOVERAGE COUNTS + DESEQ2 BOTH BATCHES. excluded F4 as per RNAseq
 #merge df counts and rename columns to input into dds object (as countdata)
 initial_filename <- "micro_PTK2B_B11_ATAC_ATAC_micro_PTK2B.counts";
@@ -34,7 +34,7 @@ rownames(full_df) <- full_df[,1]
 colnames(full_df)[2:7] <- c("WT_B11","WT_K1","WT_K2","HOM_C11","HOM_D3","HOM_C8")
 full_df <- full_df[2:7]
 #make coldata and dds objects
-coldata <- data.frame(row.names = colnames(full_df), genotype_PTK2B=as.factor(c(rep("WT",3) ,rep("HOM", 3))), batch = as.factor(c(rep("1", 1), rep("2",5))))
+coldata <- data.frame(row.names = colnames(full_df), genotype_PTK2B=as.factor(c(rep("WT",3) ,rep("HOM", 3))))
 
 coldata 
 
@@ -78,17 +78,18 @@ res_down_1
 write.csv(res_down_1, file="../res_down_0.5_0.1_deseq2_ATAC_micro.csv")
 
 
-#batch correction on vsd tranformed counts and pca plot
+
 #for custom pca plot return df of PC1 and 2
-df <- plotPCA(vsd, "genotype_PTK2B", returnData = TRUE)
-df$batch <- legend$batch
+rld <- rlog(dds, blind=FALSE)
+df <- plotPCA(rld, "genotype_PTK2B", returnData = TRUE)
+#df$batch <- legend$batch
 a <- c("1",rep("2", 2),"3","4", "5")
 df$hiPSC_clone <- a
 #custom PCA plot
 #ggplot(data= df, mapping = aes(x=PC1 , y=PC2))+geom_point(size=4, mapping = aes(color=genotype_PTK2B, shape=hiPSC_clone))+theme_classic()+theme(aspect.ratio = 1)
 #to change shapes of each sample manually
 ggplot(data= df, mapping = aes(x=PC1 , y=PC2))+geom_point(size=4, mapping = aes(color=genotype_PTK2B, shape=hiPSC_clone))+ scale_color_manual(values=c("orange", "blue"))+scale_shape_manual(values=c(17, 18, 16,19, 15,20))+theme_classic()+theme(aspect.ratio = 1,legend.title = element_text(color = "black", size = 8),legend.text = element_text(color = "black", size = 6), legend.key.size = unit(0.3, "cm"),legend.margin=margin(0,0,0,0),
-                                                                                                                                                                                                                                                   legend.box.margin=margin(0,0,0,0), legend.box.spacing = margin(10,10,10,10))+xlab("PC1 97% variance") + ylab("PC2 1% variance")
+                                                                                                                                                                                                                                                   legend.box.margin=margin(0,0,0,0), legend.box.spacing = margin(10,10,10,10))+xlab("PC1 88% variance") + ylab("PC2 10% variance")
 ggsave('../PCA_ATAC_vsdBatchCorr_micro_noNames.pdf', device = "pdf")
 #annotate peaks down 0.5
 as.data.frame(rownames(res_down)) -> df
