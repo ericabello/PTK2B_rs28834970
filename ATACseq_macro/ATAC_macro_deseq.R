@@ -86,7 +86,7 @@ df$hiPSC_clone <- c(rep(a, each=3))
 
 #to change shapes of each sample manually and % PC1 and 2 labels!!!
 ggplot(data= df, mapping = aes(x=PC1 , y=PC2))+geom_point(size=4, mapping = aes(color=genotype_PTK2B, shape=hiPSC_clone))+ scale_color_manual(values=c("orange", "blue"))+scale_shape_manual(values=c(17, 18, 16,19, 15,20))+theme_classic()+theme(aspect.ratio = 1,legend.title = element_text(color = "black", size = 8),legend.text = element_text(color = "black", size = 6), legend.key.size = unit(0.3, "cm"),legend.margin=margin(0,0,0,0),
-                                                                                                                                                                                                                                                   legend.box.margin=margin(0,0,0,0), legend.box.spacing = margin(10,10,10,10))+ xlab("PC1 80% variance") + ylab("PC2 10% variance")
+                                                                                                                                                                                                                                                   legend.box.margin=margin(0,0,0,0), legend.box.spacing = margin(10,10,10,10))+ xlab("PC1 76% variance") + ylab("PC2 16% variance")
 #ggsave("/Users/eb19/Documents/ptk2b_kolf_B11_C8_D3/RNAseq/all_samples_noF4/PCA_vsdBatchCorr_macro_noNames.jpeg", device= "jpeg")
 
 ggsave('PCA_ATAC_vsdBatchCorr_macro_noNames.pdf', device = "pdf")
